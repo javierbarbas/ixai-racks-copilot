@@ -1,0 +1,447 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Space+Grotesk:wght@600;700&display=swap");
+
+:root {
+  --bg-app: #eef3fb;
+  --bg-panel: #ffffff;
+  --bg-panel-soft: #f6f9ff;
+  --text-primary: #13213a;
+  --text-secondary: #4e5f80;
+  --text-muted: #7282a0;
+  --accent: #356dff;
+  --accent-soft: #dfe9ff;
+  --accent-2: #18b6f6;
+  --success: #159f6f;
+  --warning: #de8d2f;
+  --danger: #d84f60;
+  --radius-lg: 16px;
+  --space-lg: 1rem;
+  --shadow-soft: 0 14px 36px rgba(25, 42, 77, 0.11);
+  --border-soft: 1px solid rgba(90, 114, 158, 0.18);
+}
+
+#MainMenu,
+header,
+footer {
+  visibility: hidden;
+}
+
+html,
+body,
+[data-testid="stAppViewContainer"],
+[data-testid="stHeader"],
+[data-testid="stToolbar"] {
+  background: var(--bg-app);
+  color: var(--text-primary);
+  font-family: "Manrope", "Segoe UI", sans-serif;
+}
+
+[data-testid="stAppViewContainer"] > .main {
+  background: radial-gradient(circle at 8% 4%, rgba(53, 109, 255, 0.14), transparent 38%),
+    radial-gradient(circle at 92% 4%, rgba(24, 182, 246, 0.12), transparent 34%),
+    radial-gradient(circle at 50% 120%, rgba(87, 117, 255, 0.08), transparent 55%),
+    var(--bg-app);
+}
+
+.block-container {
+  padding-top: 0;
+  padding-bottom: 1.6rem;
+}
+
+[data-testid="stSidebar"] {
+  background: linear-gradient(180deg, #f8fbff 0%, #f2f6ff 100%);
+  border-right: var(--border-soft);
+}
+
+[data-testid="stVerticalBlockBorderWrapper"] {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.94), rgba(246, 250, 255, 0.98));
+  border: var(--border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+[data-testid="stHorizontalBlock"] > [data-testid="column"] > div {
+  height: 100%;
+}
+
+.stTabs [data-baseweb="tab-list"] {
+  gap: 8px;
+  background: transparent;
+}
+
+.stTabs [data-baseweb="tab"] {
+  background: var(--bg-panel);
+  border-radius: 12px;
+  border: var(--border-soft);
+  color: var(--text-secondary);
+  font-weight: 700;
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+}
+
+.stTabs [aria-selected="true"] {
+  background: linear-gradient(135deg, #f0f5ff, #e9f4ff) !important;
+  color: #17315f !important;
+  border-color: rgba(53, 109, 255, 0.5) !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+label,
+p,
+span,
+small,
+li,
+.stMarkdown,
+.stTextInput label,
+.stDateInput label,
+.stMultiSelect label {
+  color: var(--text-primary) !important;
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+}
+
+.section-title {
+  font-size: 1.08rem;
+  font-weight: 800;
+  color: #1c335f;
+  margin-bottom: 0.5rem;
+}
+
+.section-gap {
+  height: 14px;
+}
+
+/* Tarjetas KPI de estilo ejecutivo */
+[data-testid="stMetric"] {
+  background: linear-gradient(160deg, #ffffff 0%, #f7faff 100%) !important;
+  padding: 20px !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(90, 114, 158, 0.2) !important;
+  box-shadow: 0 16px 30px rgba(34, 57, 99, 0.12) !important;
+  min-height: 132px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Tipografia limpia */
+[data-testid="stMetricValue"] {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  color: #1b2f57 !important;
+}
+
+[data-testid="stMetricLabel"] {
+  color: #65789b !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
+}
+
+/* Delta con contraste alto - colores semanticos fintech */
+[data-testid="stMetricDelta"] {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em !important;
+}
+
+[data-testid="stMetricDelta"] svg {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+/* Caption de estado debajo de cada metrica */
+[data-testid="stMetric"] ~ div[data-testid="stCaptionContainer"],
+[data-testid="stMetric"] + div small {
+  color: #7a89a5 !important;
+  font-size: 11px !important;
+  margin-top: 2px !important;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.activity-item {
+  background: rgba(244, 248, 255, 0.88);
+  border: var(--border-soft);
+  border-radius: 10px;
+  padding: 0.68rem 0.85rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.activity-left {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.activity-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.activity-dot.high {
+  background: var(--danger);
+}
+
+.activity-dot.mid {
+  background: var(--warning);
+}
+
+.activity-dot.low {
+  background: var(--accent);
+}
+
+.activity-text {
+  color: #314c79;
+  font-size: 0.88rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.activity-amount {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #163567;
+  margin-left: 0.75rem;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.stPlotlyChart {
+  border-radius: var(--radius-lg);
+}
+
+.left-filter-banner {
+  position: sticky;
+  top: 0;
+  min-height: 100vh;
+  margin-top: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: linear-gradient(180deg, #061126 0%, #0a1a39 52%, #07142c 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(122, 162, 235, 0.25);
+}
+
+.left-filter-banner [data-testid="stVerticalBlockBorderWrapper"] {
+  background: linear-gradient(180deg, rgba(16, 27, 47, 0.96), rgba(13, 21, 38, 0.98));
+  border: 1px solid rgba(139, 160, 201, 0.18);
+  box-shadow: 0 20px 30px rgba(20, 34, 62, 0.24);
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.left-filter-banner p,
+.left-filter-banner label,
+.left-filter-banner [data-testid="stMarkdownContainer"] p {
+  color: #d9e9ff !important;
+}
+
+/* ------------------------------------------------------------------------- */
+/* Command Center Overhaul: Glassmorphism Dark                               */
+/* ------------------------------------------------------------------------- */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap");
+
+:root {
+  --cc-bg-main: #0b0b0d;
+  --cc-bg-card: #161616;
+  --cc-bg-soft: rgba(255, 255, 255, 0.05);
+  --cc-border: rgba(255, 255, 255, 0.12);
+  --cc-text: #f4f6fa;
+  --cc-text-muted: #b3bccd;
+  --cc-accent: #57b7ff;
+}
+
+html,
+body,
+[data-testid="stAppViewContainer"],
+[data-testid="stHeader"],
+[data-testid="stToolbar"] {
+  background: radial-gradient(circle at 15% -10%, rgba(87, 183, 255, 0.2), transparent 30%),
+    radial-gradient(circle at 85% -20%, rgba(53, 109, 255, 0.18), transparent 33%),
+    var(--cc-bg-main) !important;
+  color: var(--cc-text) !important;
+  font-family: "Inter", "Roboto", "Segoe UI", sans-serif !important;
+}
+
+[data-testid="stAppViewContainer"] > .main {
+  background: transparent !important;
+}
+
+/* Sin filtros laterales: ocultar sidebar por completo */
+[data-testid="stSidebar"],
+[data-testid="stSidebarCollapsedControl"] {
+  display: none !important;
+}
+
+.block-container {
+  max-width: 1360px;
+  padding-top: 1.2rem !important;
+}
+
+/* Tabs como botones integrados */
+.stTabs [data-baseweb="tab-list"] {
+  gap: 10px !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid var(--cc-border) !important;
+  border-radius: 14px !important;
+  padding: 8px !important;
+}
+
+.stTabs [data-baseweb="tab"] {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 10px !important;
+  color: var(--cc-text-muted) !important;
+  font-weight: 700 !important;
+  font-family: "Inter", "Roboto", sans-serif !important;
+}
+
+.stTabs [aria-selected="true"] {
+  background: linear-gradient(140deg, rgba(87, 183, 255, 0.24), rgba(53, 109, 255, 0.2)) !important;
+  border-color: rgba(87, 183, 255, 0.5) !important;
+  color: #ffffff !important;
+}
+
+/* Tarjetas glass dark */
+[data-testid="stVerticalBlockBorderWrapper"],
+[data-testid="stMetric"] {
+  background: linear-gradient(165deg, rgba(22, 22, 22, 0.95), rgba(26, 26, 29, 0.9)) !important;
+  border: 1px solid var(--cc-border) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(6px);
+}
+
+[data-testid="stMetricLabel"],
+[data-testid="stMetricValue"],
+[data-testid="stMetricDelta"],
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+label,
+small,
+span,
+li {
+  color: var(--cc-text) !important;
+}
+
+[data-testid="stCaptionContainer"] small,
+.stCaptionContainer {
+  color: var(--cc-text-muted) !important;
+}
+
+/* Inputs y botones */
+[data-testid="stTextArea"] textarea,
+[data-testid="stTextInput"] input {
+  background: var(--cc-bg-soft) !important;
+  color: var(--cc-text) !important;
+  border-radius: 12px !important;
+  border: 1px solid var(--cc-border) !important;
+}
+
+[data-testid="stTextArea"] textarea::placeholder {
+  color: #9fa9bf !important;
+}
+
+.stButton > button {
+  border-radius: 12px !important;
+  border: 1px solid rgba(87, 183, 255, 0.55) !important;
+  background: linear-gradient(135deg, rgba(87, 183, 255, 0.24), rgba(53, 109, 255, 0.2)) !important;
+  color: #f7fbff !important;
+  font-weight: 700 !important;
+}
+
+.stDataFrame,
+[data-testid="stDataFrame"] {
+  border-radius: 14px !important;
+  overflow: hidden !important;
+}
+
+.stDataFrame {
+  border-radius: 14px;
+}
+
+[data-testid="stDataFrame"] {
+  border: 1px solid rgba(108, 130, 171, 0.25);
+  border-radius: 14px;
+  box-shadow: 0 12px 24px rgba(38, 63, 109, 0.09);
+}
+
+/* Tabla ejecutiva: look oscuro flotante, mayor aire y jerarquia tipografica */
+[data-testid="stDataFrame"] > div {
+  background: linear-gradient(180deg, rgba(17, 26, 44, 0.96), rgba(14, 22, 38, 0.98));
+  border: 1px solid rgba(154, 173, 210, 0.14);
+  border-radius: 14px;
+}
+
+[data-testid="stDataFrame"] [role="columnheader"] {
+  font-weight: 800 !important;
+  text-align: left !important;
+  color: #dce8ff !important;
+}
+
+[data-testid="stDataFrame"] [role="gridcell"] {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  color: #ecf3ff !important;
+  border-bottom: 1px solid rgba(160, 180, 212, 0.08) !important;
+}
+
+[data-testid="stDataFrame"] [role="gridcell"] [data-testid="stMarkdownContainer"] {
+  font-weight: 600;
+}
+
+/* Alinea valores numericos hacia la derecha para lectura vertical coherente */
+[data-testid="stDataFrame"] [role="gridcell"] .stNumber,
+[data-testid="stDataFrame"] [role="gridcell"] [data-column-type="number"],
+[data-testid="stDataFrame"] [role="gridcell"] [data-column-type="integer"] {
+  text-align: right !important;
+}
+
+@media (max-width: 1080px) {
+  .kpi-card {
+    min-height: 128px;
+  }
+
+  .kpi-value {
+    font-size: 1.6rem;
+  }
+
+  .activity-text {
+    white-space: normal;
+  }
+
+  .block-container {
+    padding-top: 0.8rem;
+    padding-left: 0.7rem;
+    padding-right: 0.7rem;
+  }
+}
