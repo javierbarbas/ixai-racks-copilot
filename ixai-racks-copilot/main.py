@@ -36,29 +36,19 @@ def _configure_import_path() -> None:
 
 _configure_import_path()
 
-from src.dashboard.v2_common import (
-    apply_filters,
-    configure_page,
-    load_bundle,
-    render_captura_datos,
-    render_detalle,
-    render_nl2sql_shell,
-    render_operacion_semanal,
-    render_resumen_ejecutivo,
-    render_sidebar,
-)
+import src.dashboard.v2_common as v2
 
 
 def main() -> None:
-    configure_page("IxAI Racks Copilot | Resumen Ejecutivo")
+    v2.configure_page("IxAI Racks Copilot | Resumen Ejecutivo")
     try:
-        bundle = load_bundle()
+        bundle = v2.load_bundle()
     except Exception as exc:
         st.error(f"No fue posible cargar DuckDB: {exc}")
         return
 
-    filters = render_sidebar(bundle["estado_actual"])
-    filtered = apply_filters(bundle["estado_actual"], filters)
+    filters = v2.render_sidebar(bundle["estado_actual"])
+    filtered = v2.apply_filters(bundle["estado_actual"], filters)
 
     tab1, tab2, tab3, tab4, tab5 = st.tabs(
         [
@@ -71,19 +61,19 @@ def main() -> None:
     )
 
     with tab1:
-        render_resumen_ejecutivo(filtered, bundle["historico"])
+        v2.render_resumen_ejecutivo(filtered, bundle["historico"])
 
     with tab2:
-        render_operacion_semanal(filtered)
+        v2.render_operacion_semanal(filtered)
 
     with tab3:
-        render_detalle(filtered)
+        v2.render_detalle(filtered)
 
     with tab4:
-        render_nl2sql_shell(filtered, bundle["historico"])
+        v2.render_nl2sql_shell(filtered, bundle["historico"])
 
     with tab5:
-        render_captura_datos()
+        v2.render_captura_datos()
 
 
 if __name__ == "__main__":

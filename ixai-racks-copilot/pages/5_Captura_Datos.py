@@ -8,8 +8,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
 	sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.dashboard.v2_common import configure_page, render_captura_datos
+import src.dashboard.v2_common as v2
 
 
-configure_page("IxAI Racks Copilot | Captura de Datos")
-render_captura_datos()
+v2.configure_page("IxAI Racks Copilot | Captura de Datos")
+v2.render_captura_datos()
