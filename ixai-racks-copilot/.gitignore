@@ -1,0 +1,9 @@
+﻿# Runtime/generated artifacts
+.venv/
+__pycache__/
+*.pyc
+.tmp_*
+
+# Local data artifacts
+data/warehouse.duckdb
+data/raw/*.xlsx
