@@ -521,8 +521,8 @@ def render_nl2sql_shell(df: pd.DataFrame, historico: pd.DataFrame) -> None:
 
 
 def render_captura_datos() -> None:
-    st.markdown("# Captura de Datos")
-    st.caption("Edita o agrega registros en el Excel fuente. Al guardar, el dashboard se actualiza automaticamente.")
+    st.markdown("# Centro de Captura Operativa")
+    st.caption("Actualiza recepciones y cantidades entregadas para reflejar el estatus real en el dashboard.")
 
     try:
         source_df = load_capture_dataframe()
@@ -534,29 +534,113 @@ def render_captura_datos() -> None:
         st.write("Usa esta tabla para agregar filas nuevas o editar filas existentes.")
         st.write("Al guardar, se crea un respaldo del Excel y se ejecuta la ingesta a DuckDB.")
 
+    po_filter = st.text_input(
+        "Filtrar por PO",
+        key="captura_po_filter",
+        placeholder="Ejemplo: 45001234",
+        help="Filtra filas cuyo valor en la columna PO contenga este texto.",
+    )
+
+    filtered_mode = bool(po_filter.strip()) and "PO" in source_df.columns
+    if filtered_mode:
+        mask = source_df["PO"].astype(str).str.contains(po_filter.strip(), case=False, na=False)
+        editor_df = source_df.loc[mask].copy()
+        st.caption(f"Filtro activo: {len(editor_df):,} fila(s) visibles de {len(source_df):,} totales.")
+        st.caption("Con filtro activo solo puedes editar filas existentes.")
+    else:
+        editor_df = source_df.copy()
+
+    preferred_order = [
+        "PO",
+        "Item",
+        "Description",
+        "Qty.",
+        "Entregados",
+        "Por Entregar",
+        "%",
+        "PO Date",
+        "Fecha de Entrega",
+        "Costo Unitario",
+        "Total",
+        "RA",
+        "Ingeniero",
+        "Planeador",
+        "Condicion",
+        "Peso",
+        "Dimensiones",
+        "Cubicaje",
+        "Lison",
+    ]
+    column_order = [column for column in preferred_order if column in editor_df.columns] + [
+        column for column in editor_df.columns if column not in preferred_order
+    ]
+    disabled_columns = [column for column in ["Total", "Por Entregar", "%"] if column in editor_df.columns]
+
     edited_df = st.data_editor(
-        source_df,
+        editor_df,
         width="stretch",
-        num_rows="dynamic",
-        key="captura_excel_editor",
+        num_rows="fixed" if filtered_mode else "dynamic",
+        key="captura_excel_editor_v2",
+        column_order=column_order,
+        disabled=disabled_columns,
         column_config={
-            "PO Date": st.column_config.DateColumn("PO Date", format="YYYY-MM-DD"),
-            "Item": st.column_config.NumberColumn("Item", format="%d"),
-            "Costo Unitario": st.column_config.NumberColumn("Costo Unitario", format="$ %.2f"),
-            "Total": st.column_config.NumberColumn("Total", format="$ %.2f"),
-            "Peso": st.column_config.NumberColumn("Peso", format="%.2f"),
-            "Cubicaje": st.column_config.NumberColumn("Cubicaje", format="%.3f"),
-            "Qty.": st.column_config.NumberColumn("Qty.", format="%d"),
-            "Entregados": st.column_config.NumberColumn("Entregados", format="%d"),
-            "Por Entregar": st.column_config.NumberColumn("Por Entregar", format="%d"),
-            "%": st.column_config.NumberColumn("%", format="%.2f"),
+            "PO": st.column_config.NumberColumn("PO", format="%d", min_value=0, help="Numero de orden de compra."),
+            "PO Date": st.column_config.DateColumn("PO Date", format="YYYY-MM-DD", help="Fecha de emision de la orden."),
+            "Item": st.column_config.NumberColumn("Item", format="%d", min_value=0),
+            "Costo Unitario": st.column_config.NumberColumn("Costo Unitario", format="$ %.2f", min_value=0.0, help="Costo por pieza."),
+            "Total": st.column_config.NumberColumn("Total", format="$ %.2f", help="Campo calculado."),
+            "Peso": st.column_config.NumberColumn("Peso", format="%.2f", min_value=0.0),
+            "Cubicaje": st.column_config.NumberColumn("Cubicaje", format="%.3f", min_value=0.0),
+            "Qty.": st.column_config.NumberColumn("Qty.", format="%d", min_value=0, help="Cantidad total ordenada."),
+            "Entregados": st.column_config.NumberColumn("Entregados", format="%d", min_value=0, help="Cantidad fisica recibida hasta hoy."),
+            "Por Entregar": st.column_config.NumberColumn("Por Entregar", format="%d", help="Campo calculado."),
+            "%": st.column_config.NumberColumn("%", format="%.2f", help="Campo calculado."),
         },
     )
 
-    if st.button("Guardar cambios en Excel", type="primary", width="stretch"):
+    if st.button("Guardar y Actualizar Dashboard", type="primary", width="stretch"):
         try:
-            backup_path = save_capture_dataframe(edited_df)
-            output = run_ingest_refresh()
+            qty = pd.to_numeric(edited_df.get("Qty."), errors="coerce")
+            entregados = pd.to_numeric(edited_df.get("Entregados"), errors="coerce")
+            invalid_qty = int(qty.lt(0).fillna(False).sum()) if qty is not None else 0
+            invalid_entregados = int(entregados.lt(0).fillna(False).sum()) if entregados is not None else 0
+            entregados_gt_qty = int(((entregados > qty) & qty.notna() & entregados.notna()).fillna(False).sum())
+
+            missing_po = 0
+            if "PO" in edited_df.columns:
+                po_series = edited_df["PO"].astype(str).str.strip()
+                missing_po = int(po_series.eq("").sum() + edited_df["PO"].isna().sum())
+
+            issues: list[str] = []
+            if invalid_qty:
+                issues.append(f"Hay {invalid_qty} fila(s) con Qty. negativa.")
+            if invalid_entregados:
+                issues.append(f"Hay {invalid_entregados} fila(s) con Entregados negativo.")
+            if entregados_gt_qty:
+                issues.append(f"Hay {entregados_gt_qty} fila(s) donde Entregados es mayor a Qty.")
+            if missing_po:
+                issues.append(f"Hay {missing_po} fila(s) sin PO.")
+
+            if issues:
+                st.error("No se guardaron cambios. Corrige estos puntos:")
+                for issue in issues:
+                    st.write(f"- {issue}")
+                return
+
+            with st.status("Procesando cambios...", expanded=True) as status:
+                status.write("Validacion completada.")
+                status.write("Guardando cambios en Excel fuente...")
+
+                dataframe_to_save = edited_df
+                if filtered_mode:
+                    dataframe_to_save = source_df.copy()
+                    dataframe_to_save.loc[edited_df.index, edited_df.columns] = edited_df
+
+                backup_path = save_capture_dataframe(dataframe_to_save)
+                status.write("Ejecutando ETL para refrescar DuckDB...")
+                output = run_ingest_refresh()
+                status.update(label="Actualizacion completada", state="complete")
+
             st.success("Cambios guardados y ETL ejecutado correctamente.")
             st.caption(f"Respaldo generado: {backup_path.name}")
             st.caption(output.splitlines()[-1] if output else "ETL completado")
