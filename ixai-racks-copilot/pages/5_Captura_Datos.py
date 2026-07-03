@@ -12,4 +12,6 @@ import src.dashboard.v2_common as v2
 
 
 v2.configure_page("IxAI Racks Copilot | Captura de Datos")
+bundle = v2.load_bundle()
+v2.render_sidebar(bundle["estado_actual"])
 v2.render_captura_datos()

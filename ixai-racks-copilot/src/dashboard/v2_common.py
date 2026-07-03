@@ -644,6 +644,10 @@ def render_captura_datos() -> None:
             st.success("Cambios guardados y ETL ejecutado correctamente.")
             st.caption(f"Respaldo generado: {backup_path.name}")
             st.caption(output.splitlines()[-1] if output else "ETL completado")
-            st.rerun()
+            try:
+                st.switch_page("main.py")
+            except Exception:
+                st.page_link("main.py", label="Volver al Resumen Ejecutivo", icon="🏠")
+                st.rerun()
         except Exception as exc:
             st.error(f"No fue posible guardar y actualizar datos: {exc}")
