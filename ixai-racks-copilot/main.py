@@ -40,6 +40,7 @@ from src.dashboard.v2_common import (
     apply_filters,
     configure_page,
     load_bundle,
+    render_captura_datos,
     render_detalle,
     render_nl2sql_shell,
     render_operacion_semanal,
@@ -59,12 +60,13 @@ def main() -> None:
     filters = render_sidebar(bundle["estado_actual"])
     filtered = apply_filters(bundle["estado_actual"], filters)
 
-    tab1, tab2, tab3, tab4 = st.tabs(
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(
         [
             "1. Resumen Ejecutivo",
             "2. Operacion Semanal",
             "3. Detalle por PO / Planeador",
             "4. Pregunta a tus Datos",
+            "5. Captura de Datos",
         ]
     )
 
@@ -79,6 +81,9 @@ def main() -> None:
 
     with tab4:
         render_nl2sql_shell(filtered, bundle["historico"])
+
+    with tab5:
+        render_captura_datos()
 
 
 if __name__ == "__main__":

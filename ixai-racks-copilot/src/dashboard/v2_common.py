@@ -7,6 +7,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from src.dashboard.chat_interface import init_chat_session, render_chat_interface
+from src.data.excel_capture import load_capture_dataframe, save_capture_dataframe
 from src.data.warehouse import load_warehouse_bundle, run_ingest_refresh
 
 
@@ -72,6 +73,7 @@ def render_sidebar(df: pd.DataFrame) -> dict[str, object]:
         st.page_link("pages/2_Operacion_Semanal.py", label="Operacion Semanal", icon="📅")
         st.page_link("pages/3_Detalle_PO_Planeador.py", label="Detalle PO Planeador", icon="📋")
         st.page_link("pages/4_Pregunta_tus_Datos.py", label="Pregunta tus Datos", icon="🤖")
+        st.page_link("pages/5_Captura_Datos.py", label="Captura de Datos", icon="📝")
         st.divider()
         st.markdown("## Control Global")
 
@@ -516,3 +518,48 @@ def render_nl2sql_shell(df: pd.DataFrame, historico: pd.DataFrame) -> None:
 
     init_chat_session()
     render_chat_interface(df)
+
+
+def render_captura_datos() -> None:
+    st.markdown("# Captura de Datos")
+    st.caption("Edita o agrega registros en el Excel fuente. Al guardar, el dashboard se actualiza automaticamente.")
+
+    try:
+        source_df = load_capture_dataframe()
+    except Exception as exc:
+        st.error(f"No fue posible cargar el Excel fuente: {exc}")
+        return
+
+    with st.container(border=True):
+        st.write("Usa esta tabla para agregar filas nuevas o editar filas existentes.")
+        st.write("Al guardar, se crea un respaldo del Excel y se ejecuta la ingesta a DuckDB.")
+
+    edited_df = st.data_editor(
+        source_df,
+        width="stretch",
+        num_rows="dynamic",
+        key="captura_excel_editor",
+        column_config={
+            "PO Date": st.column_config.DateColumn("PO Date", format="YYYY-MM-DD"),
+            "Item": st.column_config.NumberColumn("Item", format="%d"),
+            "Costo Unitario": st.column_config.NumberColumn("Costo Unitario", format="$ %.2f"),
+            "Total": st.column_config.NumberColumn("Total", format="$ %.2f"),
+            "Peso": st.column_config.NumberColumn("Peso", format="%.2f"),
+            "Cubicaje": st.column_config.NumberColumn("Cubicaje", format="%.3f"),
+            "Qty.": st.column_config.NumberColumn("Qty.", format="%d"),
+            "Entregados": st.column_config.NumberColumn("Entregados", format="%d"),
+            "Por Entregar": st.column_config.NumberColumn("Por Entregar", format="%d"),
+            "%": st.column_config.NumberColumn("%", format="%.2f"),
+        },
+    )
+
+    if st.button("Guardar cambios en Excel", type="primary", width="stretch"):
+        try:
+            backup_path = save_capture_dataframe(edited_df)
+            output = run_ingest_refresh()
+            st.success("Cambios guardados y ETL ejecutado correctamente.")
+            st.caption(f"Respaldo generado: {backup_path.name}")
+            st.caption(output.splitlines()[-1] if output else "ETL completado")
+            st.rerun()
+        except Exception as exc:
+            st.error(f"No fue posible guardar y actualizar datos: {exc}")
